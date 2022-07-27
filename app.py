@@ -5,7 +5,7 @@ from flask import Flask, request, redirect, render_template
 
 from forms import (UploadImageForm)
 
-//import boto3, botocore
+import boto3, botocore
 
 import os
 
