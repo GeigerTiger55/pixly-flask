@@ -35,12 +35,13 @@ class ImageModelTestCase(TestCase):
         Image.query.delete()
 
         image1 = Image(aws_url=TEST_AWS_IMAGE_URL)
-        breakpoint()
 
+
+        db.session.add(image1)
         db.session.commit()
+
         self.image1_id=image1.id
 
-        # what does the client do?
         self.client = app.test_client()
 
     def tearDown(self):
@@ -49,9 +50,7 @@ class ImageModelTestCase(TestCase):
     def test_image_model(self):
         image1 = Image.query.get(self.image1_id)
 
-        # Image should have 1 data point
-        # //TODO: check this
-        self.assertEqual(len(image1), 1)
+        self.assertEqual(image1.aws_url, TEST_AWS_IMAGE_URL)
 
 
     # #################### Following tests
