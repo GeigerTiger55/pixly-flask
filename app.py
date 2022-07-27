@@ -9,15 +9,19 @@ import boto3, botocore
 
 import os
 
+
+
 from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
 
-app.config['S3_BUCKET'] = "S3_BUCKET_NAME"
+app.config['S3_BUCKET'] = os.environ['S3_BUCKET_NAME']
 app.config['S3_KEY'] = os.environ['AWS_ACCESS_KEY']
 app.config['S3_SECRET'] = os.environ['AWS_SECRET_KEY']
-app.config['S3_LOCATION'] = 'http://{}.s3.amazonaws.com/'.format(S3_BUCKET)
+# app.config['S3_LOCATION'] = 'http://{}.s3.amazonaws.com/'.format(S3_BUCKET)
+SECRET_KEY = os.urandom(32)
+app.config['SECRET_KEY'] = SECRET_KEY
 
 
 s3 = boto3.client(
