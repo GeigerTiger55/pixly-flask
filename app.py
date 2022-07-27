@@ -8,6 +8,12 @@ import os
 
 from werkzeug.utils import secure_filename
 
+from models import (
+    db, connect_db, Image
+)
+
+
+
 
 # gives access to env variables
 from dotenv import load_dotenv
@@ -19,9 +25,18 @@ ALLOWED_EXTENSIONS = {'jpg', 'jpeg'}
 
 app = Flask(__name__)
 
-app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
+
+
 app.config['SQLALCHEMY_DATABASE_URI'] = (
     os.environ['DATABASE_URL'].replace('postgres://','postgresql://'))
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ECHO'] = False
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
+app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
+
+connect_db(app)
+db.drop_all()
+db.create_all()
 
 
 def allowed_file(filename):
