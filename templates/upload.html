@@ -1,25 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <title>Pixly</title>
-
-  <link rel="stylesheet"
-        href="https://unpkg.com/bootstrap@5/dist/css/bootstrap.css">
-  <script src="https://unpkg.com/jquery"></script>
-  <script src="https://unpkg.com/popper"></script>
-  <script src="https://unpkg.com/bootstrap"></script>
-
-  <link rel="stylesheet"
-        href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
-  <!-- <link rel="stylesheet" href="/static/stylesheets/style.css"> -->
-  <!-- <link rel="shortcut icon" href="/static/favicon.ico"> -->
-</head>
-
-
-<body>
-  <!-- added in to get submit and part where you add in file to talk enctype="multipart/form-data"  -->
+{% extends 'base.html' %}
+{% block content %}
   <form method="POST" id="upload_form" action="/add" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
 
@@ -32,4 +12,5 @@
 
     <button class="btn btn-primary btn-lg">Upload</button>
   </form>
-</body>
+{% endblock %}
+

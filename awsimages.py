@@ -27,17 +27,18 @@ def upload_file_to_s3(file, acl="public-read"):
     https://flask.palletsprojects.com/en/1.1.x/patterns/fileuploads/
     """
     try:
-        filename = ''
-        if 'filename' in file:
-            filename = file.filename
-        else:
-            filename = file.name
+        # NOTE: this code broke the upload
+        # filename = ''
+        # if 'filename' in file:
+        #     filename = file.filename
+        # else:
+        #     filename = file.name
         # breakpoint()
         # print('file.content_type', file.content_type)
         s3.upload_fileobj(
             file,
             S3_BUCKET,
-            filename,
+            file.filename,
             ExtraArgs={
                 "ACL": acl,
                 "ContentType": file.content_type    #Set appropriate content type as per the file
@@ -46,4 +47,4 @@ def upload_file_to_s3(file, acl="public-read"):
     except Exception as e:
         print("Something Happened: ", e)
         return e
-    return "{}{}".format(S3_LOCATION, filename)
+    return "{}{}".format(S3_LOCATION, file.filename)

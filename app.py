@@ -33,8 +33,8 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
 app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 
 connect_db(app)
-db.drop_all()
-db.create_all()
+# db.drop_all()
+# db.create_all()
 
 
 def allowed_file(filename):
@@ -59,15 +59,29 @@ def upload_file():
         return "Please select a file"
     if file and allowed_file(file.filename):
         file.filename = secure_filename(file.filename)
-        print('what is file???', file)
-        aws_location = upload_file_to_s3(file)
-        print(aws_location)
-        # add file to db
-        # new_image = Image(str(aws_location))
-        # db.session.add(new_image)
-        # db.session.commit()
+        aws_location = upload_file_to_s3(file)        
+        aws_str = str(aws_location)
+        new_image = Image(aws_url=aws_str)
+        db.session.add(new_image)
+        db.session.commit()
 
-        return render_template("/sent.html",  image_aws_url=str(aws_location))
+        return render_template("/sent.html",  image_aws_url=aws_str)
     else:
         return redirect("/")
 
+@app.route("/images", methods=["GET"])
+def display_images():
+    """Page showing all images, can be filtered.
+    
+    Can take a 'q' param in querystring to search EXIF data
+    """
+
+    search = request.args.get('q')
+
+    if not search:
+        images = Image.query.all()
+        breakpoint()
+    else:
+        #TODO: update to use Full Text Search
+        images = Image.query.filter(Image.exif_metadata.like(f"%{search}%")).all()
+    return render_template("/display_images.html", images=images)
