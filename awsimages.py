@@ -32,6 +32,8 @@ def upload_file_to_s3(file, acl="public-read"):
             filename = file.filename
         else:
             filename = file.name
+        breakpoint()
+        print('file.content_type', file.content_type) 
         s3.upload_fileobj(
             file,
             S3_BUCKET,
