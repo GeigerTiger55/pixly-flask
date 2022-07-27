@@ -19,17 +19,7 @@
 
 
 <body>
-  <!-- added in to get submit and part where you add in file to talk enctype="multipart/form-data"  -->
-  <form method="POST" id="upload_form" action="/add" enctype="multipart/form-data">
-    {{ form.hidden_tag() }}
-
-    {% for field in form if field.widget.input_type != 'hidden' %}
-      {% for error in field.errors %}
-        <span class="text-danger">{{ error }}</span>
-      {% endfor %}
-      {{ field(placeholder=field.label.text, class="form-control") }}
-    {% endfor %}
-
-    <button class="btn btn-primary btn-lg">Upload</button>
-  </form>
+  <h1>Uploaded Image</h1>
+  <h1>Image URL at AWS: {{image_aws_url}}</h1>
+  <img src={{image_aws_url}} >
 </body>
