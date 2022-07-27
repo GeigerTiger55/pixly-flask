@@ -1,8 +1,8 @@
 """Flask app """
 
 from flask import Flask, request, redirect, render_template
-
 from forms import (UploadImageForm)
+from awsimages import upload_file_to_s3
 
 import os
 
@@ -15,52 +15,15 @@ load_dotenv()
 
 
 # extensions we want to allow
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_EXTENSIONS = {'jpg', 'jpeg'}
 
 app = Flask(__name__)
 
-app.config['S3_BUCKET'] = os.environ['S3_BUCKET_NAME']
-app.config['S3_KEY'] = os.environ['AWS_ACCESS_KEY']
-app.config['S3_SECRET'] = os.environ['AWS_SECRET_KEY']
-app.config['S3_LOCATION'] = 'http://{}.s3.amazonaws.com/'.format(app.config['S3_BUCKET'])
-
-# csrf forms
-SECRET_KEY = os.urandom(32)
-app.config['SECRET_KEY'] = SECRET_KEY
-
-
-import boto3
-s3 = boto3.client(
-   "s3",
-   aws_access_key_id=app.config['S3_KEY'],
-   aws_secret_access_key=app.config['S3_SECRET']
-)
+app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-def upload_file_to_s3(file, bucket_name, acl="public-read"):
-    """
-    Docs: http://boto3.readthedocs.io/en/latest/guide/s3.html
-    https://rajrajhans.com/2020/06/2-ways-to-upload-files-to-s3-in-flask/
-    https://flask.palletsprojects.com/en/1.1.x/patterns/fileuploads/
-    """
-    try:
-        s3.upload_fileobj(ß
-            file,
-            bucket_name,
-            file.filename,
-            ExtraArgs={
-                "ACL": acl,
-                "ContentType": file.content_type    #Set appropriate content type as per the file
-            }
-        )
-    except Exception as e:
-        print("Something Happened: ", e)
-        return e
-    return "{}{}".format(app.config["S3_LOCATION"], file.filename)
-
 
 
 @app.route("/add", methods=["GET"])
@@ -75,12 +38,19 @@ def upload_file():
     if "file" not in request.files:
         return "No user_file key in request.files"
     file = request.files["file"]
+    print ('request.files',request.files)
     if file.filename == "":
         return "Please select a file"
     if file and allowed_file(file.filename):
         file.filename = secure_filename(file.filename)
-        output = upload_file_to_s3(file, app.config["S3_BUCKET"])
-        return render_template("/sent.html",  image_aws_url=str(output))
+        print('what is file???', file)
+        aws_location = upload_file_to_s3(file)
+        print(aws_location)
+        # add file to db
+        # new_image = Image(str(aws_location))
+        # db.session.add(new_image)
+        # db.session.commit()
+        return render_template("/sent.html",  image_aws_url=str(aws_location))
     else:
         return redirect("/")
 
