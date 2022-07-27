@@ -15,7 +15,7 @@ from models import db, Image
 # before we import our app, since that will have already
 # connected to the database
 
-#TODO: os.environ['DATABASE_URL'] = "postgresql:///warbler_test"
+os.environ['DATABASE_URL'] = "postgresql:///pixly_test"
 
 # Now we can import app
 
@@ -34,11 +34,11 @@ class ImageModelTestCase(TestCase):
     def setUp(self):
         Image.query.delete()
 
-        #TODO: START HERE TODO:
         image1 = Image(aws_url=TEST_AWS_IMAGE_URL)
+        breakpoint()
 
         db.session.commit()
-        self.image1_id= image1.id
+        self.image1_id=image1.id
 
         # what does the client do?
         self.client = app.test_client()
