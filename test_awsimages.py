@@ -8,8 +8,8 @@ from awsimages import upload_file_to_s3
 from PIL import Image
  
 # read an image
-# img = open(r"test_image.jpg", 'rb')
-img = Image.open('test_image.jpg')
+img = open(r"test_image.jpg", 'rb')
+# img = Image.open('test_image.jpg')
 class AwsimageTestCase(TestCase):
     def setUp(self):
         # TODO: do we need to do anything here?
