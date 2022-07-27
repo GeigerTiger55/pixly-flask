@@ -28,85 +28,54 @@ from app import app
 db.create_all()
 
 
+TEST_AWS_IMAGE_URL = "https://pixly-app.s3.us-west-1.amazonaws.com/337d5b411b955a480ef0d5c878f5ecd2.jpeg"
+
 class ImageModelTestCase(TestCase):
     def setUp(self):
         Image.query.delete()
 
-        #TODO: START HERE TODO: image1 = Image.
-        u1 = User.signup("u1", "u1@email.com", "password", None)
-        u2 = User.signup("u2", "u2@email.com", "password", None)
+        #TODO: START HERE TODO:
+        image1 = Image(aws_url=TEST_AWS_IMAGE_URL)
 
         db.session.commit()
-        self.u1_id = u1.id
-        self.u2_id = u2.id
+        self.image1_id= image1.id
 
+        # what does the client do?
         self.client = app.test_client()
 
     def tearDown(self):
         db.session.rollback()
 
-    def test_user_model(self):
-        u1 = User.query.get(self.u1_id)
+    def test_image_model(self):
+        image1 = Image.query.get(self.image1_id)
 
-        # User should have no messages & no followers
-        self.assertEqual(len(u1.messages), 0)
-        self.assertEqual(len(u1.followers), 0)
+        # Image should have 1 data point
+        # //TODO: check this
+        self.assertEqual(len(image1), 1)
+
 
     # #################### Following tests
 
-    def test_user_follows(self):
-        u1 = User.query.get(self.u1_id)
-        u2 = User.query.get(self.u2_id)
 
-        u1.following.append(u2)
-        db.session.commit()
+    # def test_valid_signup(self):
+    #     u1 = User.query.get(self.u1_id)
 
-        self.assertEqual(u2.following, [])
-        self.assertEqual(u2.followers, [u1])
-        self.assertEqual(u1.followers, [])
-        self.assertEqual(u1.following, [u2])
+    #     self.assertEqual(u1.username, "u1")
+    #     self.assertEqual(u1.email, "u1@email.com")
+    #     self.assertNotEqual(u1.password, "password")
+    #     # Bcrypt strings should start with $2b$
+    #     self.assertTrue(u1.password.startswith("$2b$"))
 
-    def test_is_following(self):
-        u1 = User.query.get(self.u1_id)
-        u2 = User.query.get(self.u2_id)
+    # # #################### Authentication Tests
 
-        u1.following.append(u2)
-        db.session.commit()
+    # def test_valid_authentication(self):
+    #     u1 = User.query.get(self.u1_id)
 
-        self.assertTrue(u1.is_following(u2))
-        self.assertFalse(u2.is_following(u1))
+    #     u = User.authenticate("u1", "password")
+    #     self.assertEqual(u, u1)
 
-    def test_is_followed_by(self):
-        u1 = User.query.get(self.u1_id)
-        u2 = User.query.get(self.u2_id)
+    # def test_invalid_username(self):
+    #     self.assertFalse(User.authenticate("bad-username", "password"))
 
-        u1.following.append(u2)
-        db.session.commit()
-
-        self.assertTrue(u2.is_followed_by(u1))
-        self.assertFalse(u1.is_followed_by(u2))
-
-    # #################### Signup Tests
-
-    def test_valid_signup(self):
-        u1 = User.query.get(self.u1_id)
-
-        self.assertEqual(u1.username, "u1")
-        self.assertEqual(u1.email, "u1@email.com")
-        self.assertNotEqual(u1.password, "password")
-        # Bcrypt strings should start with $2b$
-        self.assertTrue(u1.password.startswith("$2b$"))
-
-    # #################### Authentication Tests
-
-    def test_valid_authentication(self):
-        u1 = User.query.get(self.u1_id)
-
-        u = User.authenticate("u1", "password")
-        self.assertEqual(u, u1)
-
-    def test_invalid_username(self):
-        self.assertFalse(User.authenticate("bad-username", "password"))
-
-    def test_wrong_password(self):
-        self.assertFalse(User.authenticate("u1", "bad-password"))
+    # def test_wrong_password(self):
+    #     self.assertFalse(User.authenticate("u1", "bad-password"))
