@@ -8,9 +8,7 @@ import os
 
 from werkzeug.utils import secure_filename
 
-from models import (
-    db, connect_db, Image
-)
+from models import db, connect_db, Image
 
 
 
@@ -68,6 +66,7 @@ def upload_file():
         # new_image = Image(str(aws_location))
         # db.session.add(new_image)
         # db.session.commit()
+
         return render_template("/sent.html",  image_aws_url=str(aws_location))
     else:
         return redirect("/")
