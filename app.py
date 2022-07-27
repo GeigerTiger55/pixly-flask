@@ -43,9 +43,11 @@ def allowed_file(filename):
 def upload_file_to_s3(file, bucket_name, acl="public-read"):
     """
     Docs: http://boto3.readthedocs.io/en/latest/guide/s3.html
+    https://rajrajhans.com/2020/06/2-ways-to-upload-files-to-s3-in-flask/
+    https://flask.palletsprojects.com/en/1.1.x/patterns/fileuploads/
     """
     try:
-        s3.upload_fileobj(
+        s3.upload_fileobj(ß
             file,
             bucket_name,
             file.filename,
