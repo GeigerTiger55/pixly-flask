@@ -6,3 +6,5 @@ class UploadImageForm(FlaskForm):
     '''Form for uploading image'''
 
     file = FileField()
+
+
