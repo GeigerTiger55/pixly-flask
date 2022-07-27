@@ -20,6 +20,9 @@ ALLOWED_EXTENSIONS = {'jpg', 'jpeg'}
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
+app.config['SQLALCHEMY_DATABASE_URI'] = (
+    os.environ['DATABASE_URL'].replace('postgres://','postgresql://'))
+
 
 def allowed_file(filename):
     return '.' in filename and \

@@ -1,26 +1,26 @@
 """awsimages api tests"""
 
-import os
+# import os
 from unittest import TestCase
 
-import imageio as iio
+# import imageio as iio
 from awsimages import upload_file_to_s3
-from PIL import Image
- 
+# from PIL import Image
+
 # read an image
-img = open(r"test_image.jpg", 'rb')
-# img = Image.open('test_image.jpg')
+
 class AwsimageTestCase(TestCase):
     def setUp(self):
         # TODO: do we need to do anything here?
-        print('start', img)
+        print('start')
 
     def tearDown(self):
         # TODO: delete file from aws
         print('done')
 
     def test_add_image(self):
-        print('image', img)
-        output = upload_file_to_s3(img)
-        print('output',output)
-        # self.assertIsInstance( output, str)
+        with open('test_image.jpg', "rb") as data:
+            # print('image', img)
+            output = upload_file_to_s3(data)
+            print('output', output)
+            # self.assertIsInstance( output, str)
