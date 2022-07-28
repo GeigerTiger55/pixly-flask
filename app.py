@@ -13,7 +13,6 @@ from models import db, connect_db, Image
 from image_editing import convert_to_BW
 
 
-
 # gives access to env variables
 from dotenv import load_dotenv
 load_dotenv()
@@ -121,6 +120,6 @@ def display_image_page(image_id):
 
 @app.route("/edit/bw", methods=["POST"])
 def edit_image():
+    print(g.image.aws_url)
     edited_image = convert_to_BW(g.image.aws_url)
-    # edited_image.show()
-    return render_template("/image.html", image=edited_image)
+    # return render_template("/image.html", image=edited_image)
