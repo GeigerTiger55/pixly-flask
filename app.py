@@ -1,7 +1,7 @@
 """Flask app """
 
-from flask import Flask, request, redirect, render_template
-from forms import (UploadImageForm)
+from flask import Flask, request, redirect, render_template, g
+from forms import (UploadImageForm, CSRFProtection)
 from awsimages import upload_file_to_s3
 from exifdata import get_exif_data
 
@@ -10,7 +10,7 @@ import os
 from werkzeug.utils import secure_filename
 
 from models import db, connect_db, Image
-
+from image_editing import convert_to_BW
 
 
 
@@ -38,10 +38,16 @@ connect_db(app)
 # db.create_all()
 
 
+# TODO: move function
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+@app.before_request
+def add_csrf_only_form():
+    """Add a CSRF-only form so that every route can use it."""
+
+    g.csrf_form = CSRFProtection()
 
 @app.route("/")
 def homepage():
@@ -77,7 +83,10 @@ def upload_image():
             db.session.add(new_image)
             db.session.commit()
 
-            return render_template("/sent.html",  image_aws_url=aws_str)
+            # gets id from db
+            g.image = Image.query.get_or_404(new_image.id)
+
+            return render_template("/edit.html",  image_aws_url=aws_str)
         else:
             return redirect("/")
     else:
@@ -90,7 +99,6 @@ def display_images():
 
     Can take a 'q' param in querystring to search EXIF data
     """
-
     search = request.args.get('q')
 
     if not search:
@@ -109,3 +117,10 @@ def display_image_page(image_id):
     """
     image = Image.query.get_or_404(image_id)
     return render_template("/image.html", image=image)
+
+
+@app.route("/edit/bw", methods=["POST"])
+def edit_image():
+    edited_image = convert_to_BW(g.image.aws_url)
+    # edited_image.show()
+    return render_template("/image.html", image=edited_image)

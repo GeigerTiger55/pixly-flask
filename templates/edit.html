@@ -1,0 +1,10 @@
+{% extends 'base.html' %} {% block content %}
+<h1>Uploaded Image Editor</h1>
+<h1></h1>
+<img src="{{image_aws_url}}" />
+
+<form method="POST" action="/edit/bw }}">
+  {{ g.csrf_form.hidden_tag() }}
+  <button class="btn btn-outline-primary btn-sm">Black&White</button>
+</form>
+{% endblock %}
