@@ -62,9 +62,11 @@ def upload_image():
             return "Please select a file"
         if file and allowed_file(file.filename):
             file.filename = secure_filename(file.filename)
-            aws_location = upload_file_to_s3(file)
             exif_metadata = get_exif_data(file)
             print('*****exif_metadata', exif_metadata)
+            file.seek(0)
+            aws_location = upload_file_to_s3(file)
+
             aws_str = str(aws_location)
             new_image = Image(
                 aws_url=aws_str,

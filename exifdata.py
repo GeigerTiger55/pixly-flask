@@ -25,11 +25,11 @@ def get_exif_data(imagepath):
         # get the tag name, instead of human unreadable tag id
         tag = TAGS.get(tag_id, tag_id)
         data = exifdata.get(tag_id)
-        # decode bytes 
+        # decode bytes
         if isinstance(data, bytes):
             data = data.decode()
         image_metadata += (f"{tag:25}: {data}\n")
 
-    image.close()
-    
+
+
     return image_metadata
