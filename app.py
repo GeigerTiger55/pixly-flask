@@ -98,7 +98,8 @@ def display_images():
         # breakpoint()
     else:
         #TODO: update to use Full Text Search
-        images = Image.query.filter(Image.exif_metadata.like(f"%{search}%")).all()
+        search = search.replace(" "," | ")
+        images = Image.query.filter(Image.__ts_vector__.match(search)).all()
     return render_template("/display_images.html", images=images)
 
 

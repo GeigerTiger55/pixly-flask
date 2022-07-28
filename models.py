@@ -1,8 +1,9 @@
 """SQLAlchemy model for Pixly."""
 
 from datetime import datetime
-
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import desc, Index
+from ts_vector import TSVector
 
 db = SQLAlchemy()
 
@@ -55,6 +56,18 @@ class Image(db.Model):
     exif_metadata = db.Column(
         db.Text,
         nullable=True,
+    )
+
+    __ts_vector__ = db.Column(
+        TSVector(),db.Computed(
+         "to_tsvector('english', title || ' ' || exif_metadata || ' ' || author)",
+         persisted=True)
+    )
+
+    __table_args__ = (Index(
+        'ix_image___ts_vector__',
+          __ts_vector__, 
+          postgresql_using='gin'),
     )
 
 
