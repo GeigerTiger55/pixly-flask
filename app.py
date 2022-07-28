@@ -3,6 +3,7 @@
 from flask import Flask, request, redirect, render_template
 from forms import (UploadImageForm)
 from awsimages import upload_file_to_s3
+from exifdata import get_exif_data
 
 import os
 
@@ -34,7 +35,7 @@ app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 
 connect_db(app)
 # db.drop_all()
-db.create_all()
+#db.create_all()
 
 
 def allowed_file(filename):
@@ -62,6 +63,8 @@ def upload_image():
         if file and allowed_file(file.filename):
             file.filename = secure_filename(file.filename)
             aws_location = upload_file_to_s3(file)
+            exif_metadata = get_exif_data(file)
+            print('*****exif_metadata', exif_metadata)
             aws_str = str(aws_location)
             new_image = Image(
                 aws_url=aws_str,
