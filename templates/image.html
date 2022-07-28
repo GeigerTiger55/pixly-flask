@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>{{ image.title }}</h1>
+<h2>{{ image.author }}</h2>
+<div id="{{ image.id }}" class="imagepage">
+  <img
+    src="{{ image.aws_url }}"
+    alt="{{ image.aws_url }}"
+    class="imagepage-img"
+  />
+  <p>Uploaded on: {{image.upload_timestamp}}</p>
+</div>
+
+{% endblock %}

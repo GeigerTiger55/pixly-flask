@@ -1,45 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Pix.ly</title>
 
-<head>
-  <meta charset="UTF-8">
-  <title>Warbler</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/bootstrap@5/dist/css/bootstrap.css"
+    />
+    <script src="https://unpkg.com/jquery"></script>
+    <script src="https://unpkg.com/popper"></script>
+    <script src="https://unpkg.com/bootstrap"></script>
 
-  <link rel="stylesheet"
-        href="https://unpkg.com/bootstrap@5/dist/css/bootstrap.css">
-  <script src="https://unpkg.com/jquery"></script>
-  <script src="https://unpkg.com/popper"></script>
-  <script src="https://unpkg.com/bootstrap"></script>
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
+    />
+    <link rel="stylesheet" href="/static/styles.css" />
+    <link rel="shortcut icon" href="/static/favicon.ico" />
+  </head>
 
-  <link rel="stylesheet"
-        href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
-  <link rel="stylesheet" href="/static/style.css">
-  <link rel="shortcut icon" href="/static/favicon.ico">
-</head>
+  <body class="{% block body_class %}{% endblock %}">
+    <nav class="navbar navbar-expand">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a href="/" class="navbar-brand">
+            <span>Pix.ly</span>
+          </a>
+        </div>
 
-<body class="{% block body_class %}{% endblock %}">
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+            <a href="/add"> Add Image </a>
+          </li>
+          <li>
+            <a href="/images"> Search Images </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
 
-<nav class="navbar navbar-expand">
-  <div class="container-fluid">
-
-    <div class="navbar-header">
-      <a href="/" class="navbar-brand">
-        <span>Pix.ly</span>
-      </a>
+    <div class="container">
+      {% for category, message in get_flashed_messages(with_categories=True) %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %} {% block content %} {% endblock %}
     </div>
-
-  </div>
-</nav>
-
-<div class="container">
-
-  {% for category, message in get_flashed_messages(with_categories=True) %}
-    <div class="alert alert-{{ category }}">{{ message }}</div>
-  {% endfor %}
-
-  {% block content %}
-  {% endblock %}
-
-</div>
-</body>
+  </body>
 </html>

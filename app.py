@@ -34,7 +34,7 @@ app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 
 connect_db(app)
 # db.drop_all()
-# db.create_all()
+db.create_all()
 
 
 def allowed_file(filename):
@@ -42,37 +42,46 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@app.route("/add", methods=["GET"])
-def show_upload_form():
-    form = UploadImageForm()
-    return render_template("/upload.html", form=form)
+@app.route("/")
+def homepage():
+    return redirect("/images")
 
 
 # post request attached to submit button
-@app.route("/add", methods=["POST"])
-def upload_file():
-    if "file" not in request.files:
-        return "No user_file key in request.files"
-    file = request.files["file"]
-    print ('request.files',request.files)
-    if file.filename == "":
-        return "Please select a file"
-    if file and allowed_file(file.filename):
-        file.filename = secure_filename(file.filename)
-        aws_location = upload_file_to_s3(file)        
-        aws_str = str(aws_location)
-        new_image = Image(aws_url=aws_str)
-        db.session.add(new_image)
-        db.session.commit()
+@app.route("/add", methods=["POST", "GET"])
+def upload_image():
+    form = UploadImageForm()
+    if form.validate_on_submit():
+        if "file" not in request.files:
+            return "No user_file key in request.files"
+        file = request.files["file"]
 
-        return render_template("/sent.html",  image_aws_url=aws_str)
+        print ('request.files',request.files)
+        if file.filename == "":
+            return "Please select a file"
+        if file and allowed_file(file.filename):
+            file.filename = secure_filename(file.filename)
+            aws_location = upload_file_to_s3(file)
+            aws_str = str(aws_location)
+            new_image = Image(
+                aws_url=aws_str,
+                author=form.author.data,
+                title=form.title.data
+                )
+            db.session.add(new_image)
+            db.session.commit()
+
+            return render_template("/sent.html",  image_aws_url=aws_str)
+        else:
+            return redirect("/")
     else:
-        return redirect("/")
+        return render_template("/upload.html", form=form)
+
 
 @app.route("/images", methods=["GET"])
 def display_images():
     """Page showing all images, can be filtered.
-    
+
     Can take a 'q' param in querystring to search EXIF data
     """
 
@@ -80,8 +89,16 @@ def display_images():
 
     if not search:
         images = Image.query.all()
-        breakpoint()
+        # breakpoint()
     else:
         #TODO: update to use Full Text Search
         images = Image.query.filter(Image.exif_metadata.like(f"%{search}%")).all()
     return render_template("/display_images.html", images=images)
+
+
+@app.route("/images/<int:image_id>", methods=["GET"])
+def display_image_page(image_id):
+    """Page showing image and image data.
+    """
+    image = Image.query.get_or_404(image_id)
+    return render_template("/image.html", image=image)

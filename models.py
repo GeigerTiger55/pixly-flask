@@ -34,6 +34,18 @@ class Image(db.Model):
         unique=True,
     )
 
+    author = db.Column(
+        db.Text,
+        nullable=False,
+        default="Anonymous"
+    )
+
+    title = db.Column(
+        db.Text,
+        nullable=False,
+        default="Untitled"
+    )
+
     upload_timestamp = db.Column(
         db.DateTime,
         nullable=False,

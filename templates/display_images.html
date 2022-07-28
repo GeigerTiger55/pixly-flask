@@ -1,12 +1,29 @@
 {% extends 'base.html' %}
+
 {% block content %}
+
 <h1>Images</h1>
+
+{% block searchbox %}
+  <form class="navbar-form navbar-end" action="/images">
+    <input
+        name="q"
+        class="form-control"
+        placeholder="Search images"
+        aria-label="Search"
+        id="search">
+    <button class="btn btn-default">
+      <span class="fa fa-search"></span>
+    </button>
+  </form>
+
+{% endblock %}
+
     {% for image in images %}
         <div id="{{ image.id }}" class="imagecard">
-            IMAGE!!!
-            <img src="{{ image.aws_url }}" 
-                alt="{{ image.aws_url }}" 
-                class="imagecard_img"/>
+            <a href="/images/{{ image.id}}"><img src="{{ image.aws_url }}"
+                alt="{{ image.aws_url }}"
+                class="imagecard-img"/></a>
         </div>
 
     {% endfor %}
