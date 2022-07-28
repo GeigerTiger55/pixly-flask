@@ -35,7 +35,7 @@ app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 
 connect_db(app)
 # db.drop_all()
-#db.create_all()
+# db.create_all()
 
 
 def allowed_file(filename):
@@ -71,7 +71,8 @@ def upload_image():
             new_image = Image(
                 aws_url=aws_str,
                 author=form.author.data,
-                title=form.title.data
+                title=form.title.data,
+                exif_metadata=exif_metadata
                 )
             db.session.add(new_image)
             db.session.commit()

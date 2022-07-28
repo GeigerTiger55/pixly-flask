@@ -31,5 +31,4 @@ def get_exif_data(imagepath):
         image_metadata += (f"{tag:25}: {data}\n")
 
 
-
     return image_metadata

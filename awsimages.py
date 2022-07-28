@@ -2,7 +2,7 @@ import os
 import requests
 import boto3
 from werkzeug.utils import secure_filename
-
+import uuid
 
 # gives access to env variables
 from dotenv import load_dotenv
@@ -35,10 +35,13 @@ def upload_file_to_s3(file, acl="public-read"):
         #     filename = file.name
         # breakpoint()
         # print('file.content_type', file.content_type)
+
+        filename = (f"{uuid.uuid4()}.jpeg")
+
         s3.upload_fileobj(
             file,
             S3_BUCKET,
-            file.filename,
+            filename,
             ExtraArgs={
                 "ACL": acl,
                 "ContentType": file.content_type    #Set appropriate content type as per the file
@@ -47,4 +50,4 @@ def upload_file_to_s3(file, acl="public-read"):
     except Exception as e:
         print("Something Happened: ", e)
         return e
-    return "{}{}".format(S3_LOCATION, file.filename)
+    return "{}{}".format(S3_LOCATION, filename)

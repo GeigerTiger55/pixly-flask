@@ -11,6 +11,8 @@
     class="imagepage-img"
   />
   <p>Uploaded on: {{image.upload_timestamp}}</p>
+  <p>EXIF metadata:</p>
+  <p>{{image.exif_metadata | replace("\n", "<br/>") | safe}}</p>
 </div>
 
 {% endblock %}
