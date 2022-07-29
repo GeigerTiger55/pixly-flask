@@ -35,6 +35,12 @@ class Image(db.Model):
         unique=True,
     )
 
+    aws_filename = db.Column(
+        db.Text,
+        nullable=False,
+        unique=True,
+    )
+
     author = db.Column(
         db.Text,
         nullable=False,

@@ -13,6 +13,7 @@ S3_KEY = os.environ['AWS_ACCESS_KEY']
 S3_SECRET = os.environ['AWS_SECRET_KEY']
 S3_LOCATION = 'http://{}.s3.amazonaws.com/'.format(S3_BUCKET)
 
+TEMP_FILE='temp.jpg'
 
 s3 = boto3.client(
    "s3",
@@ -37,17 +38,29 @@ def upload_file_to_s3(file, acl="public-read"):
         # print('file.content_type', file.content_type)
 
         filename = (f"{uuid.uuid4()}.jpeg")
-
+        breakpoint()
         s3.upload_fileobj(
             file,
             S3_BUCKET,
             filename,
             ExtraArgs={
                 "ACL": acl,
-                "ContentType": file.content_type    #Set appropriate content type as per the file
+                #"ContentType": file.content_type    #Set appropriate content type as per the file
             }
         )
+    except ValueError as e:
+        print("Something Happened: ", e)
+        return e
+    return {
+        'aws_url':("{}{}".format(S3_LOCATION, filename)), 
+        'aws_filename':filename,
+    }
+
+def download_file_from_s3(filename):
+    try:
+        s3.download_file(S3_BUCKET, filename, TEMP_FILE)
     except Exception as e:
         print("Something Happened: ", e)
         return e
-    return "{}{}".format(S3_LOCATION, filename)
+    print('download_file...', TEMP_FILE)
+    return TEMP_FILE

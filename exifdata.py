@@ -1,8 +1,8 @@
 from PIL import Image
 from PIL.ExifTags import TAGS
 
-def get_exif_data(imagepath):
-    image = Image.open(imagepath)
+def get_exif_data(imagefile):
+    image = Image.open(imagefile)
     image_metadata = ''
     info_dict = {
         "Filename": image.filename,

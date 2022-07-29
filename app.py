@@ -2,7 +2,7 @@
 
 from flask import Flask, request, redirect, render_template, g
 from forms import (UploadImageForm, CSRFProtection)
-from awsimages import upload_file_to_s3
+from awsimages import upload_file_to_s3, download_file_from_s3
 from exifdata import get_exif_data
 
 import os
@@ -70,11 +70,11 @@ def upload_image():
             exif_metadata = get_exif_data(file)
             print('*****exif_metadata', exif_metadata)
             file.seek(0)
-            aws_location = upload_file_to_s3(file)
-
-            aws_str = str(aws_location)
+            aws_info = upload_file_to_s3(file)
+            print('****aws_inf', aws_info)
             new_image = Image(
-                aws_url=aws_str,
+                aws_url=aws_info['aws_url'],
+                aws_filename=aws_info['aws_filename'],
                 author=form.author.data,
                 title=form.title.data,
                 exif_metadata=exif_metadata
@@ -84,8 +84,8 @@ def upload_image():
 
             # gets id from db
             g.image = Image.query.get_or_404(new_image.id)
-
-            return render_template("/edit.html",  image_aws_url=aws_str)
+            print('*****upload image, g.image', g.image, g.image.id)
+            return render_template("/edit.html",  image_aws_url=aws_info['aws_url'])
         else:
             return redirect("/")
     else:
@@ -118,8 +118,17 @@ def display_image_page(image_id):
     return render_template("/image.html", image=image)
 
 
-@app.route("/edit/bw", methods=["POST"])
-def edit_image():
-    print(g.image.aws_url)
-    edited_image = convert_to_BW(g.image.aws_url)
-    # return render_template("/image.html", image=edited_image)
+@app.route("/edit/bw/<int:image_id>", methods=["POST"])
+def edit_image(image_id):
+    """Make image black & white"""
+    # form = g.csrf_form
+    # print(g)
+
+    # if not(g.image and form.validate_on_submit()):
+    #     return redirect("/")
+    image = Image.query.get_or_404(image_id)
+    image_object = download_file_from_s3(image.aws_filename)
+    edited_image_obj = convert_to_BW(image_object)
+    temp_image_info = upload_file_to_s3(edited_image_obj)
+    print('****edit_image, temp_image_info', temp_image_info)
+    return render_template('/result.html', image_url=temp_image_info['aws_url'])
