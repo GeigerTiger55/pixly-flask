@@ -14,3 +14,8 @@ class UploadImageForm(FlaskForm):
     author = StringField("Author")
     title = StringField("Image Title")
 
+class SaveImageForm(FlaskForm):
+    """Form for saving image after edit."""
+
+    aws_url = StringField("aws_url")
+

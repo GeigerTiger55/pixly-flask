@@ -1,6 +1,11 @@
+.images-list {
+    display: flex;
+}
+
 .imagecard {
     height: 150px;
     width: 150px;
+    margin: 15px;
 }
 
 .imagecard-img {

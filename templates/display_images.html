@@ -18,13 +18,16 @@
   </form>
 
 {% endblock %}
-
+    <div class="images-list container">
+        <div class="row">
     {% for image in images %}
-        <div id="{{ image.id }}" class="imagecard">
+        <div id="{{ image.id }}" class="imagecard col">
             <a href="/images/{{ image.id}}"><img src="{{ image.aws_url }}"
                 alt="{{ image.aws_url }}"
                 class="imagecard-img"/></a>
         </div>
 
     {% endfor %}
+</div>
+    </div>
 {% endblock %}

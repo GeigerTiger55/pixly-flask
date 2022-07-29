@@ -4,15 +4,21 @@
 
 <h1>{{ image.title }}</h1>
 <h2>{{ image.author }}</h2>
-<div id="{{ image.id }}" class="imagepage">
-  <img
+<div id="{{ image.id }}" class="imagepage container">
+  <div class="row">
+    <div class="col">
+    <img
     src="{{ image.aws_url }}"
     alt="{{ image.aws_url }}"
     class="imagepage-img"
   />
   <p>Uploaded on: {{image.upload_timestamp}}</p>
+  </div>
+  <div class="col">
   <p>EXIF metadata:</p>
   <p>{{image.exif_metadata | replace("\n", "<br/>") | safe}}</p>
+  </div>
+</div>
 </div>
 
 {% endblock %}

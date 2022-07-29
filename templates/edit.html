@@ -1,10 +1,30 @@
 {% extends 'base.html' %} {% block content %}
 <h1>Uploaded Image Editor</h1>
-<h1>{{ g.image.id }}</h1>
+<h1>{{ image.title }}</h1>
+
 <img class="edit-img" src="{{image_aws_url}}" />
 
-<form method="POST" action="/edit/bw/{{ g.image.id }}">
+{% if bw == False %}
+<form method="POST" action="/edit/bw/{{ image.id }}">
   {{ g.csrf_form.hidden_tag() }}
   <button class="btn btn-outline-primary btn-sm">Black&White</button>
 </form>
+{% else %}
+<form method="GET" action="/images/{{ image.id }}">
+    {{ g.csrf_form.hidden_tag() }}
+    <button class="btn btn-outline-primary btn-sm">Cancel</button>
+  </form>
+{% endif %}
+<form method="POST" action="/save/{{ image.id }}">
+    {{ form.hidden_tag() }}
+
+    {{ form.aws_url(
+        value=image_aws_url,
+        type="hidden") }}
+
+    <!-- <input name="aws_url" type="hidden" value="{{ image_aws_url }}" /> -->
+    <button class="btn btn-outline-primary btn-sm">Save</button>
+</form>
+
+
 {% endblock %}

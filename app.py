@@ -5,7 +5,7 @@ from flask import Flask, request, redirect, render_template, g
 from werkzeug.utils import secure_filename
 
 from models import db, connect_db, Image
-from forms import (UploadImageForm, CSRFProtection)
+from forms import (SaveImageForm, UploadImageForm, CSRFProtection)
 from exifdata import get_exif_data
 from awsimages import upload_file_to_s3, download_file_from_s3, allowed_file
 from image_editing import convert_to_BW
@@ -74,13 +74,21 @@ def upload_image():
             db.session.add(new_image)
             db.session.commit()
 
-            return render_template("/edit.html",  image_aws_url=aws_info['aws_url'])
+            save_form = SaveImageForm()
+
+            return render_template("/edit.html",  
+                image_aws_url=aws_info['aws_url'], 
+                image=new_image,
+                form=save_form,
+                bw=False,
+                )
         else:
             # TODO: flash message cannot up file type - not allowed file
             return redirect("/")
     else:
         return render_template("/upload.html", form=form)
 
+################### DISPLAY IMAGE ROUTES ##############################3
 
 @app.route("/images", methods=["GET"])
 def display_images():
@@ -105,6 +113,7 @@ def display_image_page(image_id):
     image = Image.query.get_or_404(image_id)
     return render_template("/image.html", image=image)
 
+#################### EDIT/SAVE IMAGE ROUTES #########################
 
 @app.route("/edit/bw/<int:image_id>", methods=["POST"])
 def edit_image(image_id):
@@ -117,4 +126,23 @@ def edit_image(image_id):
     # TODO: add black and wite image to database
     # TODO: need to decide what we want to do with image
     # - whether it is undoable or not
-    return render_template('/result.html', image_url=temp_image_info['aws_url'])
+    save_form = SaveImageForm()
+    return render_template('/edit.html', 
+        image_aws_url=temp_image_info['aws_url'],
+        image=image,
+        bw=True,
+        form=save_form,
+        )
+
+@app.route("/save/<int:image_id>", methods=["POST"])
+def save_image(image_id):
+    """Save image and render image display page.
+
+    TODO: add form validation
+    """
+    form = SaveImageForm()
+    image = Image.query.get_or_404(image_id)
+    image.aws_url = form.aws_url.data
+    db.session.commit()
+
+    return render_template("/image.html", image=image)
