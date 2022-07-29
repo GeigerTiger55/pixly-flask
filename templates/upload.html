@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
-  <form method="POST" id="upload_form" action="/add" enctype="multipart/form-data">
+  <h2 class="display-header">Upload an Image to Pix.ly</h2>
+  <form method="POST" class="upload-form" id="upload_form" action="/add" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
 
     {% for field in form if field.widget.input_type != 'hidden' %}
@@ -9,7 +10,7 @@
       {% endfor %}
       {{ field(placeholder=field.label.text, class="form-control") }}
     {% endfor %}
-    <button class="btn btn-primary btn-lg">Upload</button>
+    <button class="btn btn-secondary btn-lg">Upload</button>
   </form>
 {% endblock %}
 
