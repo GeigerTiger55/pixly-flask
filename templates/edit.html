@@ -1,6 +1,6 @@
 {% extends 'base.html' %} {% block content %}
-<h1 class="display-header">Image Editor</h1>
-<h2 class="display-header">{{ image.title }}</h2>
+<h2 class="display-header">Image Editor</h2>
+<h3 class="display-header">{{ image.title }}</h3>
 
 <img class="edit-img" src="{{image_aws_url}}" />
 
@@ -8,7 +8,7 @@
     {% if bw == False %}
     <form method="POST" action="/edit/bw/{{ image.id }}" class="edit-page-forms">
     {{ g.csrf_form.hidden_tag() }}
-    <button class="btn btn-secondary btn-sm">Black&White</button>
+    <button class="btn btn-secondary btn-sm"> Black&White</button>
     </form>
     {% else %}
     <form method="GET" action="/images/{{ image.id }}" class="edit-page-forms">

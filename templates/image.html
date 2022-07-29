@@ -2,8 +2,9 @@
 
 {% block content %}
 
-<h1 class="display-header">{{ image.title }}</h1>
-<h2 class="display-header">{{ image.author }}</h2>
+<h2 class="display-header">{{ image.title }}</h2>
+<h4 class="display-header">{{ image.author }}</h4>
+<p>Uploaded on: {{image.upload_timestamp}}</p>
 <div id="{{ image.id }}" class="imagepage container">
   <div class="row">
     <div class="col">
@@ -12,10 +13,9 @@
     alt="{{ image.aws_url }}"
     class="imagepage-img"
   />
-  <p>Uploaded on: {{image.upload_timestamp}}</p>
   </div>
   <div class="col">
-  <p>EXIF metadata:</p>
+  <h4>EXIF metadata:</h4>
   <p>{{image.exif_metadata | replace("\n", "<br/>") | safe}}</p>
   </div>
 </div>

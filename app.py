@@ -1,4 +1,10 @@
-"""Flask app """
+"""Flask app 
+
+TODO: Create thumbnails for display_images page
+TODO: Add form validation
+TODO: Add error message handling
+
+"""
 
 import os
 from flask import Flask, request, redirect, render_template, g
