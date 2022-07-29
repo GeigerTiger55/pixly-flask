@@ -7,19 +7,25 @@ from ts_vector import TSVector
 
 db = SQLAlchemy()
 
-
 def connect_db(app):
     """Connect this database to provided Flask app.
-
-    You should call this in your Flask app.
     """
-
     db.app = app
     db.init_app(app)
 
 
 class Image(db.Model):
-    """Image table."""
+    """Image table
+    - id: primary key
+    - aws_url: full url to link the image
+    - aws_filename: filename used to store/retrieve on AWS
+    - author: image author name
+    - title: image title
+    - upload_timestamp: datetime of upload
+    - exif_metadata: photo metadata can be searched, formatted like "Brand: Canon"
+    - __ts_vector__: used for full text search of title, exif_metadata, author
+    - __table_args__: used for full text search
+     """
 
     __tablename__ = 'images'
 
@@ -72,7 +78,7 @@ class Image(db.Model):
 
     __table_args__ = (Index(
         'ix_image___ts_vector__',
-          __ts_vector__, 
+          __ts_vector__,
           postgresql_using='gin'),
     )
 

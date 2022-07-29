@@ -1,9 +1,10 @@
 """Image model tests."""
 
+# FIXME: Tests not working !!
+
 # run these tests like:
 #
 #    python -m unittest test_user_model.py
-
 
 import os
 from unittest import TestCase
@@ -25,6 +26,7 @@ from app import app
 # once for all tests --- in each test, we'll delete the data
 # and create fresh new clean test data
 
+db.drop_all()
 db.create_all()
 
 
@@ -34,8 +36,8 @@ class ImageModelTestCase(TestCase):
     def setUp(self):
         Image.query.delete()
 
+        # FIXME: need to add args below
         image1 = Image(aws_url=TEST_AWS_IMAGE_URL)
-
 
         db.session.add(image1)
         db.session.commit()
@@ -52,29 +54,3 @@ class ImageModelTestCase(TestCase):
 
         self.assertEqual(image1.aws_url, TEST_AWS_IMAGE_URL)
 
-
-    # #################### Following tests
-
-
-    # def test_valid_signup(self):
-    #     u1 = User.query.get(self.u1_id)
-
-    #     self.assertEqual(u1.username, "u1")
-    #     self.assertEqual(u1.email, "u1@email.com")
-    #     self.assertNotEqual(u1.password, "password")
-    #     # Bcrypt strings should start with $2b$
-    #     self.assertTrue(u1.password.startswith("$2b$"))
-
-    # # #################### Authentication Tests
-
-    # def test_valid_authentication(self):
-    #     u1 = User.query.get(self.u1_id)
-
-    #     u = User.authenticate("u1", "password")
-    #     self.assertEqual(u, u1)
-
-    # def test_invalid_username(self):
-    #     self.assertFalse(User.authenticate("bad-username", "password"))
-
-    # def test_wrong_password(self):
-    #     self.assertFalse(User.authenticate("u1", "bad-password"))

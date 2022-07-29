@@ -1,4 +1,6 @@
-"""awsimages api tests"""
+""" AWSimages API tests"""
+
+# FIXME: Tests not working !!
 
 # import os
 from unittest import TestCase
@@ -19,6 +21,8 @@ class AwsimageTestCase(TestCase):
         print('done')
 
     def test_add_image(self):
+        # FIXME: this is out of date - output is now an object
+        # doesn't work
         with open('test_image.jpg', "rb") as data:
             # print('image', img)
             output = upload_file_to_s3(data)

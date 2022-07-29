@@ -1,29 +1,20 @@
 """Flask app """
 
-from flask import Flask, request, redirect, render_template, g
-from forms import (UploadImageForm, CSRFProtection)
-from awsimages import upload_file_to_s3, download_file_from_s3
-from exifdata import get_exif_data
-
 import os
-
+from flask import Flask, request, redirect, render_template, g
 from werkzeug.utils import secure_filename
 
 from models import db, connect_db, Image
+from forms import (UploadImageForm, CSRFProtection)
+from exifdata import get_exif_data
+from awsimages import upload_file_to_s3, download_file_from_s3, allowed_file
 from image_editing import convert_to_BW
-
 
 # gives access to env variables
 from dotenv import load_dotenv
 load_dotenv()
 
-
-# extensions we want to allow
-ALLOWED_EXTENSIONS = {'jpg', 'jpeg'}
-
 app = Flask(__name__)
-
-
 
 app.config['SQLALCHEMY_DATABASE_URI'] = (
     os.environ['DATABASE_URL'].replace('postgres://','postgresql://'))
@@ -37,41 +28,42 @@ connect_db(app)
 # db.create_all()
 
 
-# TODO: move function
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 @app.before_request
 def add_csrf_only_form():
     """Add a CSRF-only form so that every route can use it."""
 
     g.csrf_form = CSRFProtection()
 
+
 @app.route("/")
 def homepage():
+    """Redirects to images page."""
     return redirect("/images")
 
 
 # post request attached to submit button
 @app.route("/add", methods=["POST", "GET"])
 def upload_image():
+    """Adds an image:
+
+    Show form if GET. If valid, upload image and redirect to edit page.
+    """
     form = UploadImageForm()
     if form.validate_on_submit():
         if "file" not in request.files:
+            # TODO: turn into flash message
             return "No user_file key in request.files"
         file = request.files["file"]
 
-        print ('request.files',request.files)
         if file.filename == "":
+            # TODO: turn into flash message
             return "Please select a file"
+
         if file and allowed_file(file.filename):
             file.filename = secure_filename(file.filename)
             exif_metadata = get_exif_data(file)
-            print('*****exif_metadata', exif_metadata)
             file.seek(0)
             aws_info = upload_file_to_s3(file)
-            print('****aws_inf', aws_info)
             new_image = Image(
                 aws_url=aws_info['aws_url'],
                 aws_filename=aws_info['aws_filename'],
@@ -82,11 +74,9 @@ def upload_image():
             db.session.add(new_image)
             db.session.commit()
 
-            # gets id from db
-            g.image = Image.query.get_or_404(new_image.id)
-            print('*****upload image, g.image', g.image, g.image.id)
             return render_template("/edit.html",  image_aws_url=aws_info['aws_url'])
         else:
+            # TODO: flash message cannot up file type - not allowed file
             return redirect("/")
     else:
         return render_template("/upload.html", form=form)
@@ -96,15 +86,13 @@ def upload_image():
 def display_images():
     """Page showing all images, can be filtered.
 
-    Can take a 'q' param in querystring to search EXIF data
+    Can take a 'q' param in querystring to search EXIF data.
     """
     search = request.args.get('q')
 
     if not search:
         images = Image.query.all()
-        # breakpoint()
     else:
-        #TODO: update to use Full Text Search
         search = search.replace(" "," | ")
         images = Image.query.filter(Image.__ts_vector__.match(search)).all()
     return render_template("/display_images.html", images=images)
@@ -120,15 +108,13 @@ def display_image_page(image_id):
 
 @app.route("/edit/bw/<int:image_id>", methods=["POST"])
 def edit_image(image_id):
-    """Make image black & white"""
-    # form = g.csrf_form
-    # print(g)
-
-    # if not(g.image and form.validate_on_submit()):
-    #     return redirect("/")
+    """Make image black & white and upload to S3.
+    """
     image = Image.query.get_or_404(image_id)
     image_object = download_file_from_s3(image.aws_filename)
     edited_image_obj = convert_to_BW(image_object)
     temp_image_info = upload_file_to_s3(edited_image_obj)
-    print('****edit_image, temp_image_info', temp_image_info)
+    # TODO: add black and wite image to database
+    # TODO: need to decide what we want to do with image
+    # - whether it is undoable or not
     return render_template('/result.html', image_url=temp_image_info['aws_url'])

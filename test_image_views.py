@@ -1,9 +1,10 @@
 """Image View tests."""
 
+# FIXME: Tests not working !!
+
 # run these tests like:
 #
 #    FLASK_ENV=production python -m unittest test_message_views.py
-
 
 import os
 from unittest import TestCase

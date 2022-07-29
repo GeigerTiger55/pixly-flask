@@ -2,6 +2,11 @@ from PIL import Image
 from PIL.ExifTags import TAGS
 
 def get_exif_data(imagefile):
+    """ Gets EXIF data from image
+    - Takes an image file object
+    - Returns a string with image EXIF metadata
+
+    """
     image = Image.open(imagefile)
     image_metadata = ''
     info_dict = {
@@ -29,6 +34,5 @@ def get_exif_data(imagefile):
         if isinstance(data, bytes):
             data = data.decode()
         image_metadata += (f"{tag:25}: {data}\n")
-
 
     return image_metadata

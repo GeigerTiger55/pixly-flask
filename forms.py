@@ -8,7 +8,7 @@ class CSRFProtection(FlaskForm):
 
 
 class UploadImageForm(FlaskForm):
-    '''Form for uploading image'''
+    """Form for uploading image."""
 
     file = FileField("Image", validators = [DataRequired()])
     author = StringField("Author")
