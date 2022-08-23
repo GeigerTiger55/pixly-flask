@@ -1,5 +1,7 @@
 # pixly-flask
 
+View demo here: https://r26-pixly.herokuapp.com/
+
 Image lighttable / editor
 
 Users can view photos stored in the system, upload a JPG, and convert the image to black and white.
