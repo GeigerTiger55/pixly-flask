@@ -11,11 +11,10 @@ Users can add a JPG photo using an upload form and picking a file on their compu
 
 
 System retrieves metadata from the photo (location of photo, model of camera, etc) and stores it into the database
-
-
+<img width="567" alt="Screen Shot 2022-08-22 at 7 16 58 PM" src="https://user-images.githubusercontent.com/728518/186054211-34f15a71-d198-4d32-be77-6f167a7fab40.png">
 
 
 Images themselves are stored to Amazon S3, not in the database (you’ll get to practice using AWS!)
 Users can search image data from the EXIF fields (you can learn about PostgreSQL full-text search)
-Users can perform simple image edits (for example): - turning color photos into B&W - adding sepia tones - reducing the size of the image - adding a border around the image
+Users can convert the photo to black and white
 
